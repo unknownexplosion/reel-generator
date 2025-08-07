@@ -2,9 +2,12 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 import uuid
 from werkzeug.utils import secure_filename
 import os
-import threading
-import time
-from generate_process import process_folder
+import logging
+from generate_process import process_folder, check_ffmpeg
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 UPLOAD_FOLDER = 'user_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mov', 'webm'}
@@ -58,10 +61,15 @@ def create():
                 for filename in input_files:
                     f.write(f"file '{filename}'\nduration 3\n")
             
-            # Start background processing
-            threading.Thread(target=process_folder, args=(rec_id,), daemon=True).start()
-            
-            return jsonify({"success": True, "message": "Reel creation started!", "id": rec_id})
+            # Process reel immediately for Railway deployment
+            try:
+                success = process_folder(rec_id)
+                if success:
+                    return jsonify({"success": True, "message": "Reel created successfully!", "id": rec_id})
+                else:
+                    return jsonify({"error": "Failed to create reel"}), 500
+            except Exception as e:
+                return jsonify({"error": f"Processing failed: {str(e)}"}), 500
             
         except Exception as e:
             return jsonify({"error": str(e)}), 500
@@ -94,13 +102,39 @@ def download_reel(filename):
     except FileNotFoundError:
         return jsonify({"error": "File not found"}), 404
 
+@app.route("/debug")
+def debug_info():
+    """Debug endpoint for Railway deployment"""
+    import sys
+    debug_info = {
+        "python_version": sys.version,
+        "ffmpeg_available": check_ffmpeg(),
+        "directories": {
+            "user_uploads": os.path.exists("user_uploads"),
+            "static_reels": os.path.exists("static/reels")
+        },
+        "environment": {
+            "PORT": os.environ.get('PORT'),
+            "FLASK_ENV": os.environ.get('FLASK_ENV'),
+            "API_KEY_SET": bool(os.environ.get('ELEVENLABS_API_KEY'))
+        }
+    }
+    return jsonify(debug_info)
+
 if __name__ == "__main__":
     # Ensure required directories exist
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     os.makedirs("static/reels", exist_ok=True)
     
+    # Check FFmpeg availability
+    if not check_ffmpeg():
+        logger.error("FFmpeg not found! Video processing will fail.")
+    else:
+        logger.info("FFmpeg is available")
+    
     # Get port from environment variable or default to 8000
     port = int(os.environ.get('PORT', 8000))
     debug = os.environ.get('FLASK_ENV') == 'development'
     
+    logger.info(f"Starting app on port {port}")
     app.run(debug=debug, host='0.0.0.0', port=port)

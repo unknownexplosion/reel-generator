@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['ffmpeg']
+
+[phases.install]
+cmds = ['pip install -r requirements.txt']
+
+[phases.build]
+cmds = ['mkdir -p user_uploads static/reels']
+
+[start]
+cmd = 'python app.py'
