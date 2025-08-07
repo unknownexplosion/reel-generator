@@ -106,11 +106,11 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                statusMessage.textContent = 'Reel creation started! Check gallery in a few minutes.';
+                statusMessage.textContent = 'Reel created successfully! Redirecting to gallery...';
                 statusMessage.style.color = '#28a745';
                 setTimeout(() => {
                     window.location.href = '/gallery';
-                }, 3000);
+                }, 2000);
             } else {
                 throw new Error(data.error || 'Unknown error occurred');
             }
