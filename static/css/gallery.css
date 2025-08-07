@@ -1,16 +1,64 @@
 .gallery-container {
-    padding: 2rem 0;
+    padding: 4rem 0;
+    min-height: 80vh;
 }
 
-.gallery-grid video{
-    height: 777px;
+.video-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.video-card video {
+    width: 100%;
+    height: 400px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.video-actions {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    color: white;
+    text-decoration: none;
 }
 
 .gallery-title {
     text-align: center;
-    margin-bottom: 2rem;
-    color: #333;
-    font-weight: 600;
+    margin-bottom: 3rem;
+    color: white;
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .gallery-grid {

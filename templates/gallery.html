@@ -11,9 +11,52 @@
     <h1 class="gallery-title">Reel Gallery</h1>
     <div class="gallery-grid">
         {% for reel in reels %}
-            <video src="/static/reels/{{reel}}" controls></video>
+            <div class="video-card">
+                <video src="/static/reels/{{reel}}" controls></video>
+                <div class="video-actions">
+                    <a href="/download/{{reel}}" class="download-btn" download>
+                        <i class="fas fa-download"></i>
+                        Download
+                    </a>
+                </div>
+            </div>
         {% endfor %}
- 
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Enhanced download functionality
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const url = this.href;
+            const filename = url.split('/').pop();
+            
+            // Show download feedback
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            this.style.pointerEvents = 'none';
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `reel_${filename}`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Trigger download
+            link.click();
+            document.body.removeChild(link);
+            
+            // Reset button after delay
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.style.pointerEvents = 'auto';
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %}

@@ -43,9 +43,12 @@ instance/
 .DS_Store
 Thumbs.db
 
-# Uploads
+# Uploads and generated content
 uploads/
 static/uploads/
+user_uploads/
+static/reels/*.mp4
+done.txt
 
 # Logs
 *.log

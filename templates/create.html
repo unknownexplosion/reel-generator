@@ -13,25 +13,36 @@
             <h1 class="upload-title">Create Your Reel</h1>
             <p class="upload-instructions">Upload your video files to create an amazing reel. You can upload multiple files.</p>
             
-            <form action="/create" enctype="multipart/form-data" method="post" class="dropzone" id="myDropzone" >
-                <div class="fallback">
+            <form action="/create" enctype="multipart/form-data" method="post" class="upload-form" id="uploadForm">
+                <div class="file-upload-section">
                     <div id="fileInputs">
                         <div class="file-input-group">
-                            <input name="file1" type="file" class="file-input" />
+                            <input name="file1" type="file" class="file-input" accept="image/*,video/*" required />
                             <input name="uuid" type="hidden" value="{{myid}}">
                             <button type="button" class="remove-file-btn" onclick="removeFileInput(this)" disabled>×</button>
                         </div>
                     </div>
-                    <button type="button" class="add-file-btn" onclick="addFileInput()">+ Add File</button>
+                    <button type="button" class="add-file-btn" onclick="addFileInput()">+ Add More Files</button>
+                    <p class="file-info">Supported formats: JPG, PNG, GIF, MP4, AVI, MOV, WEBM (Max 100MB)</p>
                 </div>
                 
                 <div class="text-input-container">
-                    <textarea class="text-input" id="textInput" name="text" placeholder="Enter your text to be added as voice here..." rows="4"></textarea>
+                    <label for="textInput">Voice Description:</label>
+                    <textarea class="text-input" id="textInput" name="text" placeholder="Enter the text that will be converted to voice narration for your reel..." rows="4" required></textarea>
+                    <div class="char-counter"><span id="charCount">0</span>/500 characters</div>
                 </div>
                 
                 <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-magic"></i>
                     Create Reel
                 </button>
+                
+                <div id="uploadStatus" class="upload-status" style="display: none;">
+                    <div class="status-message"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -40,14 +51,28 @@
 
 {% block extra_js %}
 <script>
-    let fileCounter = 2; // Start from 2 since we already have file1
+    let fileCounter = 2;
+    
+    // Character counter
+    const textInput = document.getElementById('textInput');
+    const charCount = document.getElementById('charCount');
+    
+    textInput.addEventListener('input', function() {
+        const count = this.value.length;
+        charCount.textContent = count;
+        
+        if (count > 500) {
+            this.value = this.value.substring(0, 500);
+            charCount.textContent = 500;
+        }
+    });
 
     function addFileInput() {
         const fileInputs = document.getElementById('fileInputs');
         const newFileInput = document.createElement('div');
         newFileInput.className = 'file-input-group';
         newFileInput.innerHTML = `
-            <input name="file${fileCounter}" type="file" class="file-input" />
+            <input name="file${fileCounter}" type="file" class="file-input" accept="image/*,video/*" />
             <button type="button" class="remove-file-btn" onclick="removeFileInput(this)">×</button>
         `;
         fileInputs.appendChild(newFileInput);
@@ -58,5 +83,44 @@
         const fileInputGroup = button.parentElement;
         fileInputGroup.remove();
     }
+    
+    // Form submission with progress
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const statusDiv = document.getElementById('uploadStatus');
+        const statusMessage = statusDiv.querySelector('.status-message');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Show progress
+        statusDiv.style.display = 'block';
+        statusMessage.textContent = 'Uploading files and creating reel...';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        fetch('/create', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                statusMessage.textContent = 'Reel creation started! Check gallery in a few minutes.';
+                statusMessage.style.color = '#28a745';
+                setTimeout(() => {
+                    window.location.href = '/gallery';
+                }, 3000);
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            statusMessage.textContent = 'Error: ' + error.message;
+            statusMessage.style.color = '#dc3545';
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-magic"></i> Create Reel';
+        });
+    });
 </script>
 {% endblock %} 
