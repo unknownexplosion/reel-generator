@@ -22,9 +22,10 @@ def text_to_speech_file(text: str, folder: str) -> str:
             
         # Check if API key is configured
         if not ELEVENLABS_API_KEY or ELEVENLABS_API_KEY == "your_api_key_here":
-            raise ValueError("ElevenLabs API key not configured")
+            print("ElevenLabs API key not configured, using fallback audio")
+            return create_fallback_audio(folder)
         
-        # Calling the text_to_speech conversion API with detailed parameters
+        # Try ElevenLabs API
         response = client.text_to_speech.convert(
             voice_id="pNInz6obpgDQGcFmaJgB", # Adam pre-made voice
             output_format="mp3_22050_32",
@@ -57,8 +58,9 @@ def text_to_speech_file(text: str, folder: str) -> str:
         
     except Exception as e:
         print(f"Error in text_to_speech_file: {str(e)}")
-        # Create a fallback silent audio file
-        fallback_path = create_fallback_audio(folder)
+        print("Falling back to text-to-speech alternative")
+        # Create a fallback with text overlay instead of voice
+        fallback_path = create_text_overlay_audio(folder, text)
         return fallback_path
 
 def create_fallback_audio(folder: str) -> str:
@@ -79,6 +81,37 @@ def create_fallback_audio(folder: str) -> str:
     except Exception as e:
         print(f"Failed to create fallback audio: {str(e)}")
         raise e
+
+def create_text_overlay_audio(folder: str, text: str) -> str:
+    """Create audio with background music for text overlay"""
+    try:
+        folder_path = f"user_uploads/{folder}"
+        os.makedirs(folder_path, exist_ok=True)
+        save_file_path = os.path.join(folder_path, "audio.mp3")
+        
+        # Create a simple tone with varying frequency (more engaging than silence)
+        # This creates a subtle background audio that works well with text overlays
+        command = [
+            'ffmpeg', '-y', '-f', 'lavfi', 
+            '-i', 'sine=frequency=220:duration=5,sine=frequency=330:duration=5',
+            '-filter_complex', '[0:0][1:0]amix=inputs=2:duration=longest:dropout_transition=2,volume=0.1',
+            '-c:a', 'mp3', '-ar', '22050', save_file_path
+        ]
+        
+        result = subprocess.run(command, capture_output=True, check=True)
+        print(f"Text overlay audio created: {save_file_path}")
+        
+        # Save the text for potential overlay in video processing
+        text_file = os.path.join(folder_path, "overlay_text.txt")
+        with open(text_file, 'w') as f:
+            f.write(text)
+            
+        return save_file_path
+        
+    except Exception as e:
+        print(f"Failed to create text overlay audio: {str(e)}")
+        # Fall back to simple silence if even this fails
+        return create_fallback_audio(folder)
 
 
 # text_to_speech_file("Hey I am a good boy and its the python course", "ac9a7034-2bf9-11f0-b9c0-ad551e1c593a")

@@ -33,6 +33,7 @@ def create_reel(folder):
     try:
         input_file = f"user_uploads/{folder}/input.txt"
         audio_file = f"user_uploads/{folder}/audio.mp3"
+        text_file = f"user_uploads/{folder}/overlay_text.txt"
         output_file = f"static/reels/{folder}.mp4"
         
         # Check if required files exist
@@ -44,12 +45,26 @@ def create_reel(folder):
         # Ensure output directory exists
         os.makedirs("static/reels", exist_ok=True)
         
+        # Check if we have text overlay (when voice generation failed)
+        video_filter = 'scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black'
+        
+        if os.path.exists(text_file):
+            with open(text_file, 'r') as f:
+                overlay_text = f.read().strip()
+            
+            # Add text overlay to video filter
+            # Escape text for FFmpeg
+            escaped_text = overlay_text.replace("'", "\\\\\\'").replace(":", "\\:")
+            text_overlay = f"drawtext=text='{escaped_text}':fontsize=60:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2:box=1:boxcolor=black@0.5:boxborderw=5"
+            video_filter = f"{video_filter},{text_overlay}"
+            logger.info(f"Adding text overlay: {overlay_text[:50]}...")
+        
         # FFmpeg command with better error handling
         command = [
             'ffmpeg', '-y',  # -y to overwrite output files
             '-f', 'concat', '-safe', '0', '-i', input_file,
             '-i', audio_file,
-            '-vf', 'scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black',
+            '-vf', video_filter,
             '-c:v', 'libx264', '-c:a', 'aac',
             '-shortest', '-r', '30', '-pix_fmt', 'yuv420p',
             output_file
