@@ -81,7 +81,3 @@ python app.py
 3. Commit changes
 4. Push to branch
 5. Open Pull Request
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
