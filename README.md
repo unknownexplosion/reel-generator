@@ -1,83 +1,106 @@
-# VidSnapAI - AI Reel Generator
 
-A modern web application for creating stunning Instagram reels using AI technology.
 
-## ✨ Features
+---
 
-- 🎬 AI-powered video editing
-- 🎵 Smart audio generation with ElevenLabs
-- 🔗 Seamless clip stitching
-- 📱 Modern glassmorphism UI
-- ⬇️ Direct download functionality
-- 🎨 Text overlay fallback system
+# 🎥 InstaReel Generator – AI-Powered Reel Creator
+
+A modern web application to effortlessly create stunning Instagram Reels using cutting-edge AI technology. From smart audio generation to seamless video stitching, **InstaReel Generator** makes content creation faster, smarter, and visually appealing.
+
+---
+
+## ✨ Key Features
+
+* 🎬 **AI-Powered Video Editing** – Auto-generate reel-ready content
+* 🎵 **Smart Voiceover with ElevenLabs** – Generate realistic AI narrations
+* 🔗 **Seamless Clip Stitching** – Combine images and videos effortlessly
+* 📱 **Modern Glassmorphism UI** – Sleek, minimal and responsive design
+* ⬇️ **Direct Download** – Instantly download your generated reels
+
+---
 
 ## 🚀 Quick Start
 
-### Local Development
+### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/unknownexplosion/reel-generator.git
 cd reel-generator
 ./install.sh
 ```
 
-### Environment Setup
+### 2. Setup Environment
+
 ```bash
 cp .env.example .env
-# Edit .env and add your ElevenLabs API key
+# Open .env and add your ElevenLabs API key
 ```
 
-### Run Application
+### 3. Run the App
+
 ```bash
 python app.py
-# Visit: http://localhost:8000
+# Visit the app at http://localhost:8000
 ```
 
-## 🌐 Live Demo
+---
 
-**Repository**: https://github.com/unknownexplosion/reel-generator
+## 🌐 Live Deployment
 
-**Deploy on Railway**: 
-1. Fork this repository
-2. Connect to Railway.app
-3. Add `ELEVENLABS_API_KEY` environment variable
-4. Deploy automatically
+**GitHub Repo**: [reel-generator](https://github.com/unknownexplosion/reel-generator)
+
+---
 
 ## 📋 Requirements
 
-- Python 3.9+
-- FFmpeg
-- ElevenLabs API key (optional - has fallback)
+* ✅ Python 3.9+
+* ✅ FFmpeg (make sure it's added to system path)
+* ✅ ElevenLabs API key (optional – system has a fallback)
+
+---
 
 ## 🎯 How It Works
 
-1. **Upload** images/videos
-2. **Add** description text
-3. **Generate** AI voice narration
-4. **Create** professional reel
-5. **Download** instantly
+1. **Upload** images or short clips
+2. **Enter** description text
+3. **Generate** AI voice narration using ElevenLabs
+4. **Compile** into a professional-quality reel
+5. **Download** and publish on Instagram or other platforms
 
-## 🔧 Tech Stack
+---
 
-- **Backend**: Flask (Python)
-- **Frontend**: HTML5, CSS3, JavaScript
-- **Audio**: ElevenLabs API
-- **Video**: FFmpeg processing
-- **UI**: Bootstrap 5 + Custom CSS
+## 🛠️ Tech Stack
 
-## 📱 Features
+| Layer     | Tech Used                              |
+| --------- | -------------------------------------- |
+| Backend   | Flask (Python)                         |
+| Frontend  | HTML5, CSS3, JavaScript                |
+| Audio     | ElevenLabs API                         |
+| Video     | FFmpeg                                 |
+| UI Design | Bootstrap 5 + Custom Glassmorphism CSS |
 
-- ✅ Modern responsive design
-- ✅ File upload with validation
-- ✅ Real-time processing
-- ✅ Download functionality
-- ✅ Gallery view
-- ✅ Error handling
-- ✅ Fallback systems
+---
+
+## 📱 Additional Capabilities
+
+* ✅ Responsive design across devices
+* ✅ File upload with real-time validation
+* ✅ Gallery preview of uploaded clips
+* ✅ Real-time reel generation
+* ✅ Smart error handling
+* ✅ Offline fallback system
+
+---
 
 ## 🤝 Contributing
 
+We welcome contributions!
+
 1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Open Pull Request
+2. Create a new feature branch
+3. Commit your changes
+4. Push to your forked repo
+5. Open a pull request with a clear explanation
+
+---
+
+---
